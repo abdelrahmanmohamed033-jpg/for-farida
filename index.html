@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>For You, My Love</title>
+
+<!-- ============================================================
+     FONTS
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marcellus&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     INTRO SEQUENCE
+     ============================================================ -->
+<div id="intro-container">
+  <canvas id="matrix-canvas"></canvas>
+  <div id="intro-text"></div>
+</div>
+
+<!-- ============================================================
+     EXISTING WEBSITE (Wrapped to hide during intro)
+     ============================================================ -->
+<div id="main-content" style="display: none;">
+
+  <!-- ============================================================
+       LOADING SCREEN
+       ============================================================ -->
+  <div id="loading-screen">
+    <div class="loading-heart">
+      <svg viewBox="0 0 100 100" class="heart-svg">
+        <path d="M50 88 C20 65, 5 45, 5 28 C5 12, 18 2, 32 2 C42 2, 48 8, 50 15 C52 8, 58 2, 68 2 C82 2, 95 12, 95 28 C95 45, 80 65, 50 88 Z"/>
+      </svg>
+    </div>
+    <p class="loading-text">preparing something beautiful<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
+  </div>
+
+  <!-- ============================================================
+       AMBIENT LAYERS + cursor trail + vignette
+       ============================================================ -->
+  <div id="ambient-hearts" class="ambient-layer" aria-hidden="true"></div>
+  <div id="ambient-petals" class="ambient-layer" aria-hidden="true"></div>
+  <canvas id="cursor-trail" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       SIGNATURE ELEMENT
+       ============================================================ -->
+  <div class="thread-rail" id="thread-rail" aria-hidden="true">
+    <div class="thread-fill" id="thread-fill"></div>
+    <div class="thread-heart" id="thread-heart">❤</div>
+  </div>
+
+  <!-- ============================================================
+       MUSIC CONTROL
+       ============================================================ -->
+  <audio id="bg-music" loop preload="none">
+    <source src="assets/audio/song.mp3" type="audio/mpeg">
+  </audio>
+  <button id="music-toggle" class="music-btn" aria-label="Toggle music">
+    <span class="music-icon">♪</span>
+  </button>
+
+  <!-- ============================================================
+       SCREEN 1 — THE PROPOSAL
+       ============================================================ -->
+  <section id="proposal" class="screen">
+    <div class="proposal-bg" style="background-image:url('assets/images/landing-portrait.jpg')"></div>
+
+    <div class="proposal-inner fade-target">
+      <p class="eyebrow">a question, before we begin</p>
+      <h1 class="script-title">Do you want to spend<br>the rest of your life with me?</h1>
+      <span class="heart-emoji">❤️</span>
+
+      <div class="button-row">
+        <button id="btn-yes" class="btn btn-yes">❤️ Yes</button>
+        <button id="btn-no" class="btn btn-no">💔 No</button>
+      </div>
+
+      <p id="no-message" class="no-message"></p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONFIRMATION MODALS & HOLD MY HAND SEQUENCE
+       ============================================================ -->
+  <div id="modal-backdrop" class="modal-backdrop">
+
+    <!-- Proposal confirmation step 1 -->
+    <div id="modal-1" class="modal glass-card">
+      <h2>Are you sure?</h2>
+      <div class="modal-buttons">
+        <button id="modal1-yes" class="btn btn-yes small">Yes</button>
+        <button id="modal1-no" class="btn btn-ghost small">Wait...</button>
+      </div>
+    </div>
+
+    <!-- Proposal confirmation step 2 -->
+    <div id="modal-2" class="modal glass-card">
+      <h2>Are you really, really sure?<br><span class="modal-sub">There's no turning back from this. ❤️</span></h2>
+      <div class="modal-buttons">
+        <button id="modal2-yes" class="btn btn-yes small">Yes, forever</button>
+        <button id="modal2-no" class="btn btn-ghost small">One more second...</button>
+      </div>
+    </div>
+
+    <!-- Hand Hold Question -->
+    <div id="modal-hold" class="modal glass-card">
+      <h2>Would you honor me and hold my hand?</h2>
+      <div class="modal-buttons">
+        <button id="modal-hold-yes" class="btn btn-yes small">Yes, I would ❤️</button>
+        <button id="modal-hold-no" class="btn btn-ghost small">No, I won't</button>
+      </div>
+    </div>
+
+    <!-- Hand Hold Confirmation 1 -->
+    <div id="modal-hold-sure" class="modal glass-card">
+      <h2>Are you sure?</h2>
+      <div class="modal-buttons">
+        <button id="modal-hold-sure-yes" class="btn btn-yes small">Yes</button>
+        <button id="modal-hold-sure-no" class="btn btn-ghost small">Wait...</button>
+      </div>
+    </div>
+
+    <!-- Hand Hold Confirmation 2 -->
+    <div id="modal-hold-suresure" class="modal glass-card">
+      <h2>Sure sure?</h2>
+      <div class="modal-buttons">
+        <button id="modal-hold-suresure-yes" class="btn btn-yes small">Yes</button>
+        <button id="modal-hold-suresure-no" class="btn btn-ghost small">One more second...</button>
+      </div>
+    </div>
+
+    <!-- Accepted Transition Message -->
+    <div id="modal-hold-transition" class="modal glass-card modal-message">
+      <span class="heart-emoji">❤️</span>
+      <h2>I knew it. I love you so much, Darling ❤️❤️🫂</h2>
+    </div>
+
+    <!-- Refused Final Message -->
+    <div id="modal-hold-final" class="modal glass-card modal-message">
+      <h2>As you like... I'm not sad or anything 😭</h2>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       MEMORY JOURNEY
+       ============================================================ -->
+  <main id="journey">
+
+    <section class="journey-intro screen">
+      <div class="fade-target">
+        <p class="eyebrow">our story, one scroll at a time</p>
+        <h2 class="script-title small">This Is Us</h2>
+        <p class="intro-copy">
+          Every love has a beginning. Here is ours — twelve moments, from our very
+          first date to hearts drawn in the sand, that became the story of you and me.
+        </p>
+        <div class="scroll-cue"><span></span></div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 1 -->
+    <section class="chapter" id="chapter-1" data-chapter="01">
+      <div class="chapter-number">01</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our First Date</h3>
+        <p class="chapter-meta">6/7/2026</p>
+      </div>
+
+      <div class="collage collage-1 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter1-1.jpg" alt="Our first date together" loading="lazy"><span class="polaroid-caption">Our First Date</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">6/7/2026 I found the love of my life and my life changed to the better and the happiest version of me came to life.</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 2 -->
+    <section class="chapter reverse" id="chapter-2" data-chapter="02">
+      <div class="chapter-number">02</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our Second Date</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-3 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter2-1.jpg" alt="Together in the car" loading="lazy"><span class="polaroid-caption">In the car</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter2-2.jpg" alt="Laughing together" loading="lazy"><span class="polaroid-caption">Glowing together</span></div>
+        <div class="polaroid p3"><img src="assets/images/chapter2-3.jpg" alt="A playful moment together" loading="lazy"><span class="polaroid-caption">Heart for you</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">You were gorgeous with your dress, and I was very happy to know you better and see you again for the second time❤️❤️</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 3 -->
+    <section class="chapter" id="chapter-3" data-chapter="03">
+      <div class="chapter-number">03</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our First Double Date</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-2 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter3-1.jpg" alt="Dressed up together for the double date" loading="lazy"><span class="polaroid-caption">Double date night</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter3-2.jpg" alt="Standing together that evening" loading="lazy"><span class="polaroid-caption">Standing together</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">I have experienced alot of things that day food fun and seeing your eyes was the best thing and our first long eye contact with your bravery's bill❤️❤️</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 4 -->
+    <section class="chapter reverse" id="chapter-4" data-chapter="04">
+      <div class="chapter-number">04</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our First Time We Drank Redbull Together</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-2 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter4-1.jpg" alt="Together in the car" loading="lazy"><span class="polaroid-caption">Quick car ride</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter4-2.jpg" alt="Two Red Bull cans" loading="lazy"><span class="polaroid-caption">مع حبيب قلبي</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">It was just 30min but a was very happy with them and i would do it again and again just to see you even for 5min🥹❤️</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 5 -->
+    <section class="chapter" id="chapter-5" data-chapter="05">
+      <div class="chapter-number">05</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">My Best Trial for Boba</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-2 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter5-1.jpg" alt="Boba drinks together in the sun" loading="lazy"><span class="polaroid-caption">Boba date</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter5-2.jpg" alt="A close-up smile with boba" loading="lazy"><span class="polaroid-caption">Sweetest smile</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">You was delightful that day and we had alot of fun and i could believe that boba would be good to try again but i trusted you and I loved it so much but not as much as I love you❤️❤️</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 6 -->
+    <section class="chapter reverse" id="chapter-6" data-chapter="06">
+      <div class="chapter-number">06</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our First Cinema Date</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-3 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter6-1.jpg" alt="At the cinema together" loading="lazy"><span class="polaroid-caption">At the cinema</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter6-2.jpg" alt="Together at the cinema" loading="lazy"><span class="polaroid-caption">Close together</span></div>
+        <div class="polaroid p3"><img src="assets/images/chapter6-3.jpg" alt="Another cinema moment" loading="lazy"><span class="polaroid-caption">Cinema hall</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">My first time I listen to your breath and your heart and leaning on each other was the best felling ever and feeding you with my hands and you feeding me was really cute</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 7 -->
+    <section class="chapter" id="chapter-7" data-chapter="07">
+      <div class="chapter-number">07</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our First Time to Go to Clinic and Get Groceries</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-2 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter7-1.jpg" alt="A quiet everyday moment together" loading="lazy"><span class="polaroid-caption">Everyday moments</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter7-2.jpg" alt="Standing together after running errands" loading="lazy"><span class="polaroid-caption">My dream life</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">I loved the boring things when it is with you and this is my dream life, you are my dream girl</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 8 -->
+    <section class="chapter reverse" id="chapter-8" data-chapter="08">
+      <div class="chapter-number">08</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">My Birthday</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-2 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter8-1.jpg" alt="Together on my birthday" loading="lazy"><span class="polaroid-caption">My birthday with you</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter8-2.jpg" alt="A birthday gift, engraved with my name" loading="lazy"><span class="polaroid-caption">Engraved gift</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">Your care and the details of the hole day was awesome I couldn't belive the happiness i felt and holding your hand for the first time made me melt down</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 9 -->
+    <section class="chapter" id="chapter-9" data-chapter="09">
+      <div class="chapter-number">09</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our First Long Ride and Shopping</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-2 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter9-1.jpg" alt="Together on the long ride" loading="lazy"><span class="polaroid-caption">Long ride</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter9-2.jpg" alt="Holding hands for the first time" loading="lazy"><span class="polaroid-caption">Holding hands</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">You was gorgeous and I was very luky to be with you all that time and sending kisses to each other was very romantic and holding eye contact while holding hands I really love yoy babe and helping you to choose and wear the dress this was fellings I can't describe 🥹❤️❤️❤️</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 10 -->
+    <section class="chapter reverse" id="chapter-10" data-chapter="10">
+      <div class="chapter-number">10</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">The Most Gorgeous Girl With the Most Random Hijab 😂❤️❤️❤️❤️</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-2 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter10-1.jpg" alt="A candid selfie" loading="lazy"><span class="polaroid-caption">Angel face</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter10-2.jpg" alt="Another candid selfie" loading="lazy"><span class="polaroid-caption">Random hijab cute moment</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">You made me happy with your trust of me and seeing me as your safe space and your comfort zone</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 11 -->
+    <section class="chapter" id="chapter-11" data-chapter="11">
+      <div class="chapter-number">11</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Seeing the Beach With Your Eyes</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-3 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter11-1.jpg" alt="At night by the sea" loading="lazy"><span class="polaroid-caption">Night lights</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter11-2.jpg" alt="At the beach" loading="lazy"><span class="polaroid-caption">Beach day</span></div>
+        <div class="polaroid p3"><img src="assets/images/chapter11-3.jpg" alt="By the sea" loading="lazy"><span class="polaroid-caption">By the sea</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">I was really happy that you was happy those days and can't wait till we go to the beach together all alone🥹❤️❤️🫂</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 12 -->
+    <section class="chapter reverse" id="chapter-12" data-chapter="12">
+      <div class="chapter-number">12</div>
+      <div class="chapter-header fade-target">
+        <h3 class="script-title chapter-title">Our Names</h3>
+        <p class="chapter-meta">Edit this line with the real date &amp; place</p>
+      </div>
+
+      <div class="collage collage-3 fade-target">
+        <div class="polaroid p1"><img src="assets/images/chapter12-1.jpg" alt="A heart drawn in the sand with shells" loading="lazy"><span class="polaroid-caption">Heart with shells</span></div>
+        <div class="polaroid p2"><img src="assets/images/chapter12-2.jpg" alt="Our initials drawn in the sand" loading="lazy"><span class="polaroid-caption">Initials in sand</span></div>
+        <div class="polaroid p3"><img src="assets/images/chapter12-3.jpg" alt="A heart with our names in the sand" loading="lazy"><span class="polaroid-caption">Drawn with love</span></div>
+      </div>
+
+      <div class="memory-box glass-card fade-target">
+        <p class="memory-label">the memory</p>
+        <p class="memory-text" contenteditable="false">I love you so much you brought the joy and happiness to my life you are really an angel, I love you my love, my home my everthing❤️❤️🫂</p>
+      </div>
+    </section>
+
+    <!-- trigger point: when this enters view, the finale sequence begins -->
+    <div id="finale-trigger"></div>
+
+    <!-- ============================================================
+         FINALE
+         ============================================================ -->
+    <section id="finale" class="screen">
+      <canvas id="finale-canvas"></canvas>
+      <div class="finale-content">
+        <div class="finale-portrait">
+          <img src="assets/images/finale-bouquet.jpg" alt="A cherished moment">
+        </div>
+        <p class="finale-line" data-line="1">You are the most gorgeous girl in the entire world.</p>
+        <p class="finale-line" data-line="2">Thank you for making my life beautiful.</p>
+        <p class="finale-line" data-line="3">I promise to love you forever...</p>
+        <p class="finale-line" data-line="4">...and beyond. ❤️∞</p>
+        <h2 class="finale-title" data-line="5">Happy Birthday, My Love ❤️</h2>
+        <div class="finale-heart">
+          <svg viewBox="0 0 100 100" class="heart-svg glow">
+            <path d="M50 88 C20 65, 5 45, 5 28 C5 12, 18 2, 32 2 C42 2, 48 8, 50 15 C52 8, 58 2, 68 2 C82 2, 95 12, 95 28 C95 45, 80 65, 50 88 Z"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
